@@ -6,3 +6,5 @@ node_modules/
 sessions/*
 !sessions/.gitkeep
 !sessions/*example*/
+.vercel
+.env*
