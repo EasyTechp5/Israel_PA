@@ -1,3 +1,28 @@
+# Israel_PA · Roast Room
+
+A personal, web-hosted version of the open-source **Roast Room**: bring a hard business decision, watch simulated advisors argue it out, then keep chatting with the Chair or any single advisor.
+
+- **Live council in the browser.** `web/index.html` runs a quick (4 advisors) or full (7 advisors) council through `api/council.mjs` and streams the debate as it happens.
+- **Chat after the verdict.** `api/chat.mjs` lets you talk to the Chair or any advisor, with the verdict as context.
+- **Deploys to Vercel.** Static page in `web/`, serverless functions in `api/`, config in `vercel.json`. No build step.
+
+### Run it on Vercel
+
+1. Import this repo as a Vercel project (framework: Other, no build command).
+2. Add the environment variable `ANTHROPIC_API_KEY` (Production). Get a key at https://console.anthropic.com/settings/keys.
+3. Optional: `SEAT_MODEL` and `CHAIR_MODEL` to change the models. Defaults are Sonnet for advisors and Opus for the Chair.
+4. Keep Vercel Deployment Protection on if the site is only for you. Every council spends your API credits.
+
+### Run it locally
+
+`npm start` starts the original viewer on http://localhost:4730. To run councils inside Claude Code, open `claude` in this folder and use `/roast-room`.
+
+### Credits
+
+Built on [nateherkai/roast-room](https://github.com/nateherkai/roast-room) (MIT, AI Automation Society). The advisors, brains, and council logic are theirs; the web chat interface and Vercel setup are added here. The advisors are simulations built from public work, not the real people.
+
+---
+
 # Roast Room
 
 ![The Roast Room](docs/room.jpg)

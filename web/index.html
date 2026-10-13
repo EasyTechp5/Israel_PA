@@ -1,0 +1,504 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Israel_PA · Roast Room</title>
+<meta name="description" content="Bring a hard business decision. Seven simulated advisors argue it out, then you keep chatting with them.">
+<style>
+  :root {
+    --bg: #0b0f14; --panel: #121821; --panel-2: #18202b; --line: rgba(255,255,255,.09); --line-2: rgba(255,255,255,.18);
+    --ink: #f4f6f9; --soft: #c5ccd6; --mute: #8b96a5; --gold: #f5b942; --gold-soft: rgba(245,185,66,.13);
+    --go: #43d19a; --warn: #ff9a3c; --bad: #ff5d5d; --r: 14px;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  }
+  :root[data-theme="light"] {
+    --bg: #f6f4ef; --panel: #ffffff; --panel-2: #f1eee7; --line: rgba(0,0,0,.09); --line-2: rgba(0,0,0,.2);
+    --ink: #14181f; --soft: #3b4350; --mute: #6b7584; --gold: #b7791f; --gold-soft: rgba(183,121,31,.12);
+    --go: #14875f; --warn: #b4560a; --bad: #c0392b;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f6f4ef; --panel: #ffffff; --panel-2: #f1eee7; --line: rgba(0,0,0,.09); --line-2: rgba(0,0,0,.2);
+      --ink: #14181f; --soft: #3b4350; --mute: #6b7584; --gold: #b7791f; --gold-soft: rgba(183,121,31,.12);
+      --go: #14875f; --warn: #b4560a; --bad: #c0392b;
+    }
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body { background: var(--bg); color: var(--soft); font: 15px/1.55 var(--font); -webkit-font-smoothing: antialiased; }
+  button, textarea, input { font: inherit; color: inherit; }
+  button { cursor: pointer; }
+  [hidden] { display: none !important; }
+  h1, h2, h3 { color: var(--ink); margin: 0; letter-spacing: -.01em; }
+  .wrap { max-width: 1240px; margin: 0 auto; padding: 0 16px 48px; }
+  header { display: flex; align-items: center; gap: 12px; padding: 18px 0; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .logo { width: 34px; height: 34px; border-radius: 9px; background: var(--gold); color: #1a1405; display: grid; place-items: center; font-weight: 800; }
+  header h1 { font-size: 18px; }
+  header .sub { color: var(--mute); font-size: 13px; }
+  header .sp { flex: 1; }
+  .pill { font-size: 12px; padding: 4px 10px; border-radius: 99px; border: 1px solid var(--line-2); color: var(--mute); }
+  .pill.ok { color: var(--go); border-color: var(--go); }
+  .pill.bad { color: var(--warn); border-color: var(--warn); }
+  .grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 20px; margin-top: 20px; align-items: start; }
+  @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--r); padding: 18px; }
+  .card + .card { margin-top: 14px; }
+  .banner { border: 1px solid var(--warn); background: rgba(255,154,60,.08); color: var(--soft); border-radius: var(--r); padding: 12px 14px; margin-top: 16px; font-size: 14px; }
+  label.lbl { display: block; font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--mute); margin-bottom: 8px; }
+  textarea { width: 100%; min-height: 130px; resize: vertical; background: var(--panel-2); border: 1px solid var(--line-2); border-radius: 10px; padding: 12px 14px; line-height: 1.5; }
+  textarea:focus, input:focus { outline: 2px solid var(--gold); outline-offset: 1px; }
+  .row { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+  .seg { display: inline-flex; border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; }
+  .seg button { background: transparent; border: 0; padding: 8px 14px; color: var(--mute); font-size: 14px; }
+  .seg button[aria-pressed="true"] { background: var(--gold-soft); color: var(--gold); font-weight: 600; }
+  .btn { background: var(--gold); color: #1a1405; border: 0; border-radius: 10px; padding: 10px 18px; font-weight: 700; }
+  .btn:disabled { opacity: .5; cursor: not-allowed; }
+  .btn.ghost { background: transparent; color: var(--soft); border: 1px solid var(--line-2); font-weight: 500; }
+  .chips { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+  .chip { background: var(--panel-2); border: 1px solid var(--line); color: var(--soft); border-radius: 99px; padding: 6px 12px; font-size: 13px; text-align: left; }
+  .chip:hover { border-color: var(--gold); }
+  .hint { color: var(--mute); font-size: 13px; margin-top: 8px; }
+  .phase { display: flex; align-items: center; gap: 10px; color: var(--ink); font-weight: 600; }
+  .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--gold); animation: pulse 1.1s ease-in-out infinite; flex: none; }
+  .dot.done { animation: none; background: var(--go); }
+  @keyframes pulse { 50% { opacity: .35; transform: scale(.8); } }
+  @media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+  .opts { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+  .opt { font-size: 13px; background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 5px 10px; }
+  .opt b { color: var(--gold); margin-right: 6px; }
+  .round h3 { font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--mute); margin: 18px 0 10px; }
+  .seat { display: grid; grid-template-columns: 52px 1fr; gap: 12px; padding: 12px; border: 1px solid var(--line); border-left: 3px solid var(--c, var(--line-2)); border-radius: 12px; background: var(--panel-2); margin-bottom: 10px; }
+  .seat img, .av { width: 52px; height: 52px; border-radius: 50%; object-fit: cover; object-position: top; background: var(--panel); border: 2px solid var(--c, var(--line-2)); }
+  .av { display: grid; place-items: center; font-weight: 800; color: var(--ink); }
+  .seat .nm { color: var(--ink); font-weight: 700; display: flex; gap: 8px; align-items: baseline; flex-wrap: wrap; }
+  .seat .nm small { color: var(--mute); font-weight: 400; }
+  .seat .st { font-size: 13px; color: var(--gold); font-weight: 600; }
+  .seat .call { margin-top: 4px; }
+  .scores { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+  .score { font-size: 12px; border: 1px solid var(--line-2); border-radius: 6px; padding: 2px 8px; color: var(--soft); }
+  .score.top { border-color: var(--gold); color: var(--gold); font-weight: 700; }
+  details summary { cursor: pointer; color: var(--mute); font-size: 13px; margin-top: 8px; }
+  .full { white-space: pre-wrap; font-size: 13.5px; margin-top: 8px; color: var(--soft); }
+  .wait { color: var(--mute); font-style: italic; }
+  .verdict .lab { display: inline-block; font-weight: 800; letter-spacing: .04em; padding: 5px 12px; border-radius: 8px; background: var(--gold-soft); color: var(--gold); border: 1px solid var(--gold); }
+  .verdict .lab.go { background: rgba(67,209,154,.12); color: var(--go); border-color: var(--go); }
+  .verdict .lab.bad { background: rgba(255,93,93,.12); color: var(--bad); border-color: var(--bad); }
+  .verdict h2 { margin-top: 10px; font-size: 21px; line-height: 1.3; }
+  .verdict h4 { color: var(--ink); margin: 18px 0 6px; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; }
+  .verdict ul, .verdict ol { margin: 0; padding-left: 20px; }
+  .verdict li { margin: 4px 0; }
+  .bar { display: grid; grid-template-columns: 1fr 44px; gap: 10px; align-items: center; margin: 6px 0; font-size: 13px; }
+  .bar .t { height: 8px; background: var(--panel-2); border-radius: 99px; overflow: hidden; margin-top: 4px; }
+  .bar .f { height: 100%; background: var(--line-2); }
+  .bar.top .f { background: var(--gold); }
+  .bar .n { text-align: right; color: var(--ink); font-weight: 700; }
+  .fine { color: var(--mute); font-size: 12px; margin-top: 18px; }
+  .err { color: var(--bad); }
+  /* chat */
+  .chat { position: sticky; top: 12px; max-height: calc(100vh - 24px); display: flex; flex-direction: column; }
+  @media (max-width: 900px) { .chat { position: static; max-height: none; } }
+  .who { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; }
+  .who button { background: transparent; border: 0; padding: 4px; border-radius: 12px; text-align: center; min-width: 58px; color: var(--mute); font-size: 11px; }
+  .who button .av, .who button img { width: 42px; height: 42px; margin: 0 auto 3px; display: block; }
+  .who button[aria-pressed="true"] { color: var(--gold); }
+  .who button[aria-pressed="true"] .av, .who button[aria-pressed="true"] img { border-color: var(--gold); }
+  .who-info { font-size: 13px; color: var(--mute); margin: 2px 0 10px; }
+  .msgs { flex: 1; min-height: 220px; max-height: 52vh; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 4px 2px 10px; }
+  .m { max-width: 92%; padding: 10px 12px; border-radius: 12px; white-space: pre-wrap; font-size: 14.5px; }
+  .m.u { align-self: flex-end; background: var(--gold-soft); border: 1px solid var(--gold); color: var(--ink); }
+  .m.a { align-self: flex-start; background: var(--panel-2); border: 1px solid var(--line); color: var(--soft); }
+  .send { display: flex; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; }
+  .send input { flex: 1; min-width: 0; background: var(--panel-2); border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 12px; }
+  .starter { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+  .theme { background: transparent; border: 1px solid var(--line-2); border-radius: 8px; padding: 5px 9px; color: var(--mute); font-size: 12px; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo" aria-hidden="true">R</div>
+    <div>
+      <h1>Israel_PA · Roast Room</h1>
+      <div class="sub">Seven simulated advisors argue your decision, then you keep chatting with them.</div>
+    </div>
+    <div class="sp"></div>
+    <span id="keyPill" class="pill">checking…</span>
+    <button class="theme" id="themeBtn" type="button" aria-label="Toggle light or dark">Theme</button>
+  </header>
+
+  <div id="keyBanner" class="banner" hidden>
+    <b>One step left:</b> the live council and chat need an Anthropic API key. In your Vercel project open
+    <b>Settings → Environment Variables</b>, add <code>ANTHROPIC_API_KEY</code> for Production, then redeploy.
+    You can look around until then.
+  </div>
+
+  <div class="grid">
+    <main>
+      <section class="card" id="composer">
+        <label class="lbl" for="prompt">Your decision</label>
+        <textarea id="prompt" maxlength="4000" placeholder="The decision in one line, your options, your numbers, your limits, what success looks like, and which way you are leaning. Example: I have no cash and 10 hours a week. Should I sell AI automation builds, post on LinkedIn, or grow my academy?"></textarea>
+        <div class="chips" id="examples"></div>
+        <div class="row">
+          <div class="seg" role="group" aria-label="Council size">
+            <button type="button" id="mQuick" aria-pressed="true">Quick · 4 advisors</button>
+            <button type="button" id="mFull" aria-pressed="false">Full · 7 advisors</button>
+          </div>
+          <button class="btn" id="run" type="button">Run the council</button>
+        </div>
+        <div class="hint" id="modeHint">Quick takes about 2 to 3 minutes and uses fewer credits. Use Full for decisions that are expensive or hard to undo.</div>
+      </section>
+      <section id="stage" hidden></section>
+    </main>
+
+    <aside class="card chat" aria-label="Chat with the advisors">
+      <h2 style="font-size:16px;margin-bottom:10px">Chat with the room</h2>
+      <div class="who" id="who" role="group" aria-label="Who to chat with"></div>
+      <div class="who-info" id="whoInfo"></div>
+      <div class="msgs" id="msgs" aria-live="polite"></div>
+      <div class="starter" id="starter"></div>
+      <form class="send" id="sendForm">
+        <input id="msgIn" type="text" autocomplete="off" maxlength="3000" placeholder="Ask a follow-up…" aria-label="Your message">
+        <button class="btn" id="sendBtn" type="submit">Send</button>
+      </form>
+    </aside>
+  </div>
+  <p class="fine">Simulated advisors built from each person's public work. They are not the people and do not speak for them. Based on the open-source Roast Room (MIT).</p>
+</div>
+
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+const el = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+const CHAIR = { key: "chair", short: "Chair", name: "The Chair", pillar: "Runs the room and keeps the score", color: "#f5b942" };
+const EXAMPLES = [
+  "I have no cash and 10 hours a week. I know AI automation (n8n, Make). Should I sell builds to businesses, post daily on LinkedIn, or grow my training academy? Goal: first paying clients by December.",
+  "I make $30k a month coaching 15 clients at $2,000 each. Should I raise to $3,500 for everyone, raise for new clients only, or keep $2,000? I have $40k in the bank.",
+  "Should I hire my first salesperson at $5k a month, or keep selling myself? I do about $20k a month and have 3 months of cash.",
+];
+
+let seats = [], bySeat = {}, hasKey = false, mode = "quick", running = false;
+let current = null;           // the council currently shown: {setup, verdict, cards}
+let who = "chair";
+const convo = {};             // advisor key -> [{role, content}]
+
+/* ---------- theme (per-viewer convenience only) ---------- */
+(function theme() {
+  let t = null; try { t = localStorage.getItem("theme"); } catch {}
+  if (t) document.documentElement.dataset.theme = t;
+  $("themeBtn").onclick = () => {
+    const dark = (document.documentElement.dataset.theme || (matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark")) === "dark";
+    const next = dark ? "light" : "dark";
+    document.documentElement.dataset.theme = next;
+    try { localStorage.setItem("theme", next); } catch {}
+  };
+})();
+
+/* ---------- boot ---------- */
+async function boot() {
+  try {
+    const r = await fetch("/api/status", { cache: "no-store" });
+    const j = await r.json();
+    seats = j.seats; hasKey = j.hasKey;
+  } catch {
+    seats = [];
+  }
+  bySeat = Object.fromEntries(seats.map((s) => [s.key, s]));
+  const pill = $("keyPill");
+  if (!seats.length) { pill.textContent = "server unreachable"; pill.className = "pill bad"; }
+  else if (hasKey) { pill.textContent = "live"; pill.className = "pill ok"; }
+  else { pill.textContent = "API key needed"; pill.className = "pill bad"; $("keyBanner").hidden = false; }
+  for (const t of EXAMPLES) {
+    const b = el("button", "chip", t.length > 78 ? t.slice(0, 76) + "…" : t);
+    b.type = "button"; b.onclick = () => { $("prompt").value = t; $("prompt").focus(); };
+    $("examples").appendChild(b);
+  }
+  renderWho();
+  selectWho("chair");
+}
+
+function portrait(s, size) {
+  if (s.key === "chair") { const d = el("div", "av", "C"); d.style.setProperty("--c", s.color); return d; }
+  const i = new Image(); i.src = `/portraits/${s.key}.webp`; i.alt = ""; i.loading = "lazy";
+  i.style.setProperty("--c", s.color); if (size) { i.width = i.height = size; }
+  return i;
+}
+
+/* ---------- mode ---------- */
+$("mQuick").onclick = () => setMode("quick");
+$("mFull").onclick = () => setMode("full");
+function setMode(m) {
+  mode = m;
+  $("mQuick").setAttribute("aria-pressed", m === "quick");
+  $("mFull").setAttribute("aria-pressed", m === "full");
+  $("modeHint").textContent = m === "quick"
+    ? "Quick takes about 2 to 3 minutes and uses fewer credits. Use Full for decisions that are expensive or hard to undo."
+    : "Full seats all seven advisors for three rounds. It takes several minutes and uses a lot more credits.";
+}
+
+/* ---------- run a council ---------- */
+$("run").onclick = runCouncil;
+async function runCouncil() {
+  if (running) return;
+  const prompt = $("prompt").value.trim();
+  if (prompt.length < 10) { $("prompt").focus(); return; }
+  running = true; $("run").disabled = true; $("run").textContent = "Council in session…";
+  const stage = $("stage"); stage.hidden = false; stage.replaceChildren();
+  current = { setup: null, verdict: null, cards: {}, prompt, mode };
+
+  const phase = el("div", "card"); const ph = el("div", "phase"); const dot = el("span", "dot"); const phText = el("span", null, "Connecting…");
+  ph.append(dot, phText); phase.appendChild(ph); const setupBox = el("div"); phase.appendChild(setupBox); stage.appendChild(phase);
+  const rounds = el("div", "card round"); rounds.hidden = true; stage.appendChild(rounds);
+  const cruxBox = el("div", "card"); cruxBox.hidden = true; stage.appendChild(cruxBox);
+  const verdictBox = el("div", "card verdict"); verdictBox.hidden = true; stage.appendChild(verdictBox);
+  const tiles = {}; // "round:seat" -> {box, status, call, scores, full}
+  phase.scrollIntoView({ block: "nearest", behavior: "smooth" });
+
+  const showError = (msg) => { dot.className = "dot done"; phText.textContent = "Stopped"; const e = el("div", "err", msg); e.style.marginTop = "8px"; phase.appendChild(e); };
+
+  function roundSection(n) {
+    let sec = rounds.querySelector(`[data-round="${n}"]`);
+    if (!sec) {
+      rounds.hidden = false;
+      sec = el("div"); sec.dataset.round = n;
+      sec.appendChild(el("h3", null, n === 1 ? "Round 1 · Opening positions" : n === 2 ? "Round 2 · The debate" : "Round 3 · The vote"));
+      rounds.appendChild(sec);
+    }
+    return sec;
+  }
+  function tile(round, key) {
+    const id = round + ":" + key;
+    if (tiles[id]) return tiles[id];
+    const s = bySeat[key] || { key, short: key, name: key, color: "#888" };
+    const box = el("div", "seat"); box.style.setProperty("--c", s.color);
+    box.appendChild(portrait(s));
+    const body = el("div");
+    const nm = el("div", "nm"); nm.append(el("span", null, s.name), el("small", null, s.pillar || ""));
+    const st = el("div", "st wait", "Thinking…");
+    const call = el("div", "call"); const scores = el("div", "scores"); const full = el("details");
+    body.append(nm, st, call, scores, full); box.appendChild(body);
+    roundSection(round).appendChild(box);
+    return (tiles[id] = { box, st, call, scores, full });
+  }
+  function fillTile(round, key, parsed, text) {
+    const t = tile(round, key);
+    t.st.className = "st"; t.st.textContent = parsed.vote ? ({ endorse: "Endorses", amend: "Endorses with amendment", dissent: "Dissents" })[parsed.vote] : (parsed.stance || "Done");
+    t.call.textContent = parsed.call || parsed.oneLine || parsed.disagreeLine || "";
+    t.scores.replaceChildren();
+    const entries = Object.entries(parsed.optionScores || {});
+    const top = Math.max(...entries.map(([, v]) => v), -1);
+    for (const [id, v] of entries) t.scores.appendChild(el("span", "score" + (v === top ? " top" : ""), `${id} ${v}/10`));
+    t.full.replaceChildren(el("summary", null, "Read the full answer"), el("div", "full", text));
+    (current.cards[round] ||= {})[key] = { parsed, text };
+  }
+
+  let reply;
+  try {
+    reply = await fetch("/api/council", { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ prompt, mode }) });
+  } catch (e) { showError("Could not reach the server. Check your connection and try again."); return finish(); }
+  if (!reply.ok || !reply.body) {
+    let msg = "The council could not start.";
+    try { msg = (await reply.json()).error || msg; } catch {}
+    showError(msg); return finish();
+  }
+
+  const reader = reply.body.getReader(); const dec = new TextDecoder(); let buf = "";
+  const handle = (ev) => {
+    switch (ev.type) {
+      case "phase": phText.textContent = ev.label; break;
+      case "setup": {
+        current.setup = ev;
+        setupBox.replaceChildren();
+        const t = el("h2", null, ev.title); t.style.cssText = "font-size:18px;margin-top:12px";
+        setupBox.append(t, el("p", null, ev.brief));
+        const o = el("div", "opts"); for (const x of ev.options) { const c = el("span", "opt"); c.append(el("b", null, x.id), document.createTextNode(x.label)); o.appendChild(c); }
+        setupBox.appendChild(o);
+        if (ev.assumptions?.length) { const d = el("details"); d.append(el("summary", null, "What the Chair assumed"), el("div", "full", ev.assumptions.map((a) => "• " + a).join("\n"))); setupBox.appendChild(d); }
+        break;
+      }
+      case "seat_start": tile(ev.round, ev.seat); break;
+      case "seat_done": fillTile(ev.round, ev.seat, ev.parsed || {}, ev.text || ""); break;
+      case "seat_error": { const t = tile(ev.round, ev.seat); t.st.textContent = "Could not answer"; t.st.className = "st err"; break; }
+      case "cruxes": {
+        cruxBox.hidden = false; cruxBox.replaceChildren(el("h3", null, "Where they split"));
+        cruxBox.firstChild.style.cssText = "font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--mute)";
+        if (ev.note) cruxBox.appendChild(el("p", null, ev.note));
+        const ul = el("ul"); ul.style.paddingLeft = "20px";
+        for (const c of ev.cruxes || []) {
+          const li = el("li"); li.appendChild(el("b", null, c.question + " "));
+          li.appendChild(document.createTextNode((c.sides || []).map((s) => `${s.position} (${(s.seats || []).map((k) => bySeat[k]?.short || k).join(", ")})`).join(" vs. ")));
+          ul.appendChild(li);
+        }
+        cruxBox.appendChild(ul);
+        break;
+      }
+      case "verdict": current.verdict = ev; renderVerdict(verdictBox, ev.verdict, current.setup); verdictBox.hidden = false; verdictBox.scrollIntoView({ block: "nearest", behavior: "smooth" }); break;
+      case "error": showError(ev.error || "The council hit an error."); break;
+      case "end": dot.className = "dot done"; if (!current.verdict) { /* error already shown */ } else phText.textContent = "Verdict is in"; break;
+    }
+  };
+  try {
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buf += dec.decode(value, { stream: true });
+      let i;
+      while ((i = buf.indexOf("\n\n")) >= 0) {
+        const block = buf.slice(0, i); buf = buf.slice(i + 2);
+        for (const line of block.split("\n")) {
+          if (!line.startsWith("data:")) continue;
+          try { handle(JSON.parse(line.slice(5))); } catch {}
+        }
+      }
+    }
+  } catch { if (!current.verdict) showError("The connection dropped before the verdict. Try again, or use Quick mode."); }
+  if (!current.verdict && !phase.querySelector(".err")) showError("The council ended without a verdict. Try again.");
+  finish();
+
+  function finish() {
+    running = false; $("run").disabled = false; $("run").textContent = "Run another council";
+    if (current?.verdict) { selectWho("chair"); announce(); }
+  }
+}
+
+function renderVerdict(box, v, setup) {
+  box.replaceChildren();
+  const labClass = v.label === "GO" ? "go" : v.label === "DON'T DO IT" ? "bad" : "";
+  box.appendChild(el("span", "lab " + labClass, v.label));
+  const opt = setup?.options?.find((o) => o.id === v.recommended);
+  box.appendChild(el("h2", null, v.call));
+  if (opt) box.appendChild(el("p", "hint", `Recommended: Option ${opt.id}, ${opt.label}`));
+  if (v.override_note) box.appendChild(el("p", null, v.override_note));
+  box.appendChild(el("h4", null, "Option scores"));
+  const scores = Object.entries(v.scores || {}); const best = Math.max(...scores.map(([, s]) => s.score ?? 0));
+  for (const [id, s] of scores) {
+    const row = el("div", "bar" + ((s.score ?? 0) === best ? " top" : ""));
+    const l = el("div"); l.append(document.createTextNode(`${id}: ${setup?.options?.find((o) => o.id === id)?.label || ""}`));
+    const t = el("div", "t"); const f = el("div", "f"); f.style.width = Math.max(0, Math.min(100, (s.score ?? 0) * 10)) + "%"; t.appendChild(f); l.appendChild(t);
+    row.append(l, el("div", "n", s.score == null ? "-" : s.score.toFixed(1)));
+    box.appendChild(row);
+  }
+  box.appendChild(el("p", "hint", `Confidence ${v.confidence ?? "-"}/10 · Spread ${v.spread ?? "-"}${v.support != null ? ` · Support ${v.support}/10` : ""}`));
+  const list = (title, items, ordered) => {
+    if (!items?.length) return;
+    box.appendChild(el("h4", null, title));
+    const ul = el(ordered ? "ol" : "ul");
+    for (const it of items) ul.appendChild(el("li", null, it));
+    box.appendChild(ul);
+  };
+  list("Why the council landed here", (v.why || []).map((w) => `${w.point} (${w.seat}, ${w.framework})`));
+  list("Where they fought", (v.fights || []).map((f) => `${f.crux} ${f.story}`));
+  if (v.minority?.quote) { box.appendChild(el("h4", null, "Minority report")); box.appendChild(el("p", null, `${v.minority.seat}: "${v.minority.quote}" This is right if: ${v.minority.would_have_to_be_true}`)); }
+  list("Conditions", v.conditions, true);
+  list("What to do next", (v.next_steps || []).map((n) => `${n.when}: ${n.action}`), true);
+  if (v.cheapest_test) { box.appendChild(el("h4", null, "Cheapest test")); box.appendChild(el("p", null, v.cheapest_test)); }
+  if (v.kill_criteria) { box.appendChild(el("h4", null, "Kill criteria")); box.appendChild(el("p", null, v.kill_criteria)); }
+  if (v.revisit) { box.appendChild(el("h4", null, "Revisit")); box.appendChild(el("p", null, v.revisit)); }
+  const act = el("div", "row");
+  const copy = el("button", "btn ghost", "Copy as text"); copy.type = "button";
+  copy.onclick = async () => { try { await navigator.clipboard.writeText(verdictText(v, setup)); copy.textContent = "Copied"; } catch { copy.textContent = "Copy failed"; } };
+  const chat = el("button", "btn", "Chat about this verdict"); chat.type = "button"; chat.onclick = () => { selectWho("chair"); $("msgIn").focus(); $("msgIn").scrollIntoView({ block: "center", behavior: "smooth" }); };
+  act.append(chat, copy); box.appendChild(act);
+  box.appendChild(el("p", "fine", v.disclaimer || "Simulated advisors built from each person's public work. They are not the people and do not speak for them."));
+}
+
+function verdictText(v, setup) {
+  const L = [`${setup?.title || "Council"}: ${v.label}`, v.call, ""];
+  L.push("Scores: " + Object.entries(v.scores || {}).map(([k, s]) => `${k} ${s.score}`).join(" · "));
+  L.push("", "Conditions:", ...(v.conditions || []).map((c, i) => `${i + 1}. ${c}`));
+  L.push("", "Next steps:", ...(v.next_steps || []).map((n) => `- ${n.when}: ${n.action}`));
+  L.push("", "Cheapest test: " + (v.cheapest_test || ""), "Kill criteria: " + (v.kill_criteria || ""));
+  return L.join("\n");
+}
+
+/* ---------- chat ---------- */
+function renderWho() {
+  const box = $("who"); box.replaceChildren();
+  for (const s of [CHAIR, ...seats]) {
+    const b = el("button"); b.type = "button"; b.dataset.key = s.key; b.setAttribute("aria-pressed", s.key === who);
+    b.title = `${s.name}: ${s.pillar}`;
+    b.append(portrait(s, 42), el("div", null, s.short));
+    b.onclick = () => selectWho(s.key);
+    box.appendChild(b);
+  }
+}
+function selectWho(key) {
+  who = key;
+  for (const b of $("who").children) b.setAttribute("aria-pressed", b.dataset.key === key);
+  const s = key === "chair" ? CHAIR : bySeat[key];
+  $("whoInfo").textContent = s ? `${s.name} · ${s.pillar}${s.question ? ": " + s.question : ""}` : "";
+  paintMsgs();
+  const st = $("starter"); st.replaceChildren();
+  const hasV = Boolean(current?.verdict);
+  const prompts = key === "chair"
+    ? (hasV ? ["Why did you land on this call?", "What should I do in the next 48 hours?", "What would change this verdict?"] : ["How does the council work?", "What should I put in my question?"])
+    : (hasV ? ["Where do you disagree with the verdict?", "What do I do this week?", "What am I missing?"] : ["What is the first thing you would check?", "What would you do with 10 hours a week?"]);
+  for (const t of prompts) { const b = el("button", "chip", t); b.type = "button"; b.onclick = () => { $("msgIn").value = t; $("sendForm").requestSubmit(); }; st.appendChild(b); }
+}
+function paintMsgs() {
+  const box = $("msgs"); box.replaceChildren();
+  const list = convo[who] || [];
+  if (!list.length) {
+    const s = who === "chair" ? CHAIR : bySeat[who];
+    box.appendChild(el("div", "m a", who === "chair"
+      ? "I'm the Chair. Run a council above and I'll walk you through the verdict, or ask me anything about how this works."
+      : `Ask ${s?.short || "me"} anything about your decision. ${current?.verdict ? "I've seen the council's verdict." : "Run a council first for sharper answers."}`));
+  }
+  for (const m of list) box.appendChild(el("div", "m " + (m.role === "user" ? "u" : "a"), m.content));
+  box.scrollTop = box.scrollHeight;
+}
+function announce() {
+  const v = current.verdict.verdict;
+  convo.chair = [{ role: "assistant", content: `The council is done: ${v.label}. ${v.call}\n\nAsk me why, what to do first, or what would change the call. You can also switch to any advisor above.` }];
+  paintMsgs();
+}
+function contextText() {
+  if (!current?.verdict) return "";
+  const v = current.verdict.verdict, s = current.setup;
+  const L = [`Founder's question: ${current.prompt}`, `Decision: ${s?.decision || ""}`, "Options: " + (s?.options || []).map((o) => `${o.id}: ${o.label}`).join("; ")];
+  L.push(`Verdict: ${v.label}. ${v.call}`, "Scores: " + Object.entries(v.scores || {}).map(([k, x]) => `${k} ${x.score}`).join(", "));
+  L.push("Why: " + (v.why || []).map((w) => `${w.point} (${w.seat})`).join(" | "));
+  L.push("Conditions: " + (v.conditions || []).join(" | "), "Next steps: " + (v.next_steps || []).map((n) => `${n.when}: ${n.action}`).join(" | "));
+  L.push("Cheapest test: " + (v.cheapest_test || ""), "Kill criteria: " + (v.kill_criteria || ""));
+  const last = Math.max(...Object.keys(current.cards).map(Number), 0);
+  for (const [k, c] of Object.entries(current.cards[last] || {})) L.push(`${bySeat[k]?.short || k} said: ${c.parsed.call || c.parsed.oneLine || c.parsed.stance || ""}`);
+  return L.join("\n").slice(0, 6000);
+}
+let sending = false;
+$("sendForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const text = $("msgIn").value.trim();
+  if (!text || sending) return;
+  sending = true; $("sendBtn").disabled = true; $("msgIn").value = "";
+  const key = who;
+  const list = (convo[key] ||= []);
+  list.push({ role: "user", content: text });
+  const reply = { role: "assistant", content: "" };
+  list.push(reply);
+  paintMsgs();
+  const bubble = $("msgs").lastChild; bubble.textContent = "…";
+  try {
+    const r = await fetch("/api/chat", {
+      method: "POST", headers: { "content-type": "application/json" },
+      body: JSON.stringify({ who: key, messages: list.slice(0, -1), context: contextText() }),
+    });
+    if (!r.ok || !r.body) {
+      let msg = "Could not get an answer."; try { msg = (await r.json()).error || msg; } catch {}
+      reply.content = msg; if (who === key) bubble.textContent = msg;
+    } else {
+      const rd = r.body.getReader(), dc = new TextDecoder();
+      for (;;) {
+        const { value, done } = await rd.read(); if (done) break;
+        reply.content += dc.decode(value, { stream: true });
+        if (who === key) { bubble.textContent = reply.content; $("msgs").scrollTop = $("msgs").scrollHeight; }
+      }
+    }
+  } catch { reply.content = "The connection dropped. Try again."; if (who === key) bubble.textContent = reply.content; }
+  sending = false; $("sendBtn").disabled = false;
+});
+
+boot();
+</script>
+</body>
+</html>
